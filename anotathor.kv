@@ -2,9 +2,7 @@
   orientation: "horizontal"
   DisplayLayout:
     id: display
-    Landmark:
-      size_hint: (0.1, 0.1)
-      # pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
 
   ToolbarContainer:
     id: toolbar
@@ -55,6 +53,8 @@
       pos: (self.x, self.y)
       size: (self.width, self.height)
 
+  size_hint: (None, None)
+  size: (10,10)
   drag_rectangle: self.x, self.y, self.width, self.height
   drag_timeout: 10000000
   drag_distance: 0
