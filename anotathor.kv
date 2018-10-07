@@ -1,10 +1,10 @@
+#:include kvClasses/landmark.kv
+
 <MainBox>:
   orientation: "horizontal"
   DisplayLayout:
     id: display
-    Landmark:
-      size_hint: (0.1, 0.1)
-      # pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
 
   ToolbarContainer:
     id: toolbar
@@ -46,15 +46,3 @@
       size_hint_y: 0.2
       text: "Prev"
       id: prev
-
-<Landmark>:
-  canvas.after:
-    Color:
-      rgb: (0.1, 1, 0.1)
-    Rectangle:
-      pos: (self.x, self.y)
-      size: (self.width, self.height)
-
-  drag_rectangle: self.x, self.y, self.width, self.height
-  drag_timeout: 10000000
-  drag_distance: 0
