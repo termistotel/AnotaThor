@@ -1,0 +1,60 @@
+<MainBox>:
+  orientation: "horizontal"
+  DisplayLayout:
+    id: display
+    Landmark:
+      size_hint: (0.1, 0.1)
+      # pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+  ToolbarContainer:
+    id: toolbar
+    orientation: "vertical"
+    size_hint_x: 0.1
+    padding: 10
+    spacing: 10
+
+    BoxLayout:
+      orientation: "horizontal"
+      size_hint: (None, None)
+      width: self.parent.width - 2*self.parent.spacing
+      height: self.width/2
+
+      ToggleButton:
+        id: drag
+        text: "Drag"
+        group: "modeSelect"
+
+      ToggleButton:
+        id: insert
+        text: "Insert"
+        group: "modeSelect"
+
+    Button: 
+      size_hint_y: 0.2
+      text: "Save"
+      id: save
+
+    Label:
+      size_hint_y: 0.4
+
+    Button:
+      size_hint_y: 0.2
+      text: "Next"
+      id: next
+
+    Button:
+      size_hint_y: 0.2
+      text: "Prev"
+      id: prev
+
+<Landmark>:
+  canvas.after:
+    Color:
+      rgb: (0.1, 1, 0.1)
+    Rectangle:
+      pos: (self.x, self.y)
+      size: (self.width, self.height)
+
+  drag_rectangle: self.x, self.y, self.width, self.height
+  drag_timeout: 10000000
+  drag_distance: 0
