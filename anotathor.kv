@@ -1,3 +1,5 @@
+#:include kvClasses/landmark.kv
+
 <MainBox>:
   orientation: "horizontal"
   DisplayLayout:
@@ -44,17 +46,3 @@
       size_hint_y: 0.2
       text: "Prev"
       id: prev
-
-<Landmark>:
-  canvas.after:
-    Color:
-      rgb: (0.1, 1, 0.1)
-    Rectangle:
-      pos: (self.x, self.y)
-      size: (self.width, self.height)
-
-  size_hint: (None, None)
-  size: (10,10)
-  drag_rectangle: self.x, self.y, self.width, self.height
-  drag_timeout: 10000000
-  drag_distance: 0

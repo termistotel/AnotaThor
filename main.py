@@ -2,6 +2,7 @@ import kivy
 kivy.require('1.10.0') # replace with your current kivy version !
 
 from kivy.app import App
+from pyClasses.landmark import Landmark
 
 class AnotathorApp(App):
   def build(self):
@@ -12,8 +13,6 @@ class AnotathorApp(App):
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.relativelayout import RelativeLayout
 from kivy.uix.floatlayout import FloatLayout
-from kivy.uix.widget import Widget
-from kivy.uix.behaviors import DragBehavior
 from kivy.properties import NumericProperty
 
 
@@ -43,10 +42,6 @@ class DisplayLayout(FloatLayout):
   pass
   # TODO: Implement changable size of landmarks
   # landmarkScale = NumericProperty(0.1)
-
-class Landmark(DragBehavior, Widget):
-  def __init__(self, **kwargs):
-    super(Landmark, self).__init__(**kwargs)
 
 if __name__ == '__main__':
     AnotathorApp().run()
