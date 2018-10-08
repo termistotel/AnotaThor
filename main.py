@@ -34,6 +34,7 @@ class MainBox(BoxLayout):
     prevButton = self.ids.prev
     dragButton = self.ids.drag
     insertButton = self.ids.insert
+    saveButton = self.ids.save
 
     # Two functions of display
     dragFunction = displayLayout.on_touch_down
@@ -45,10 +46,20 @@ class MainBox(BoxLayout):
     prevButton.on_press = self.prevImage
     dragButton.on_press = partial(self.changeMouseFunction, dragFunction)
     insertButton.on_press = partial(self.changeMouseFunction, insertFunction)
+    saveButton.on_press = self.saveShape
 
     # Starting states
     insertButton.state = "down"
     displayLayout.on_touch_down = insertFunction
+
+  def saveShape(self, *args, **kwargs):
+    display = self.ids.display
+    coords = []
+    for child in display.children:
+      if isinstance(child, Landmark):
+        coords.append(child.center)
+
+    print(self.nextList[len(self.nextList)-1], coords)
 
   def addLandmark(self, touch, *args, **kwargs):
     displayLayout = self.ids.display
