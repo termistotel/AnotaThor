@@ -25,7 +25,6 @@ class MainBox(BoxLayout):
 
     self.previousList = []
     self.nextList = []
-   # self.newImage=Image()
 
 
     # References to main widgets
@@ -96,10 +95,6 @@ class DisplayLayout(FloatLayout):
   def changeImg(self, src):
     if src:
       self.newImage.source=src
-   
-    for child in self.children:
-      print(child)
-
 
 if __name__ == '__main__':
     AnotathorApp().run()
