@@ -3,6 +3,7 @@ kivy.require('1.10.0') # replace with your current kivy version !
 
 from functools import partial
 import os
+import json
 from kivy.app import App
 from pyClasses.landmark import Landmark
 
@@ -59,7 +60,12 @@ class MainBox(BoxLayout):
       if isinstance(child, Landmark):
         coords.append(child.center)
 
-    print(self.nextList[len(self.nextList)-1], coords)
+    dataPoint = {'imgName': self.nextList[len(self.nextList)-1], 'coords': coords}
+    jsonString = json.dumps(dataPoint)
+
+    with open('landmarks.json', 'a') as saveFile:
+      saveFile.write(jsonString)
+      saveFile.write("\n")
 
   def addLandmark(self, touch, *args, **kwargs):
     displayLayout = self.ids.display
