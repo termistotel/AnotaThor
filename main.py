@@ -25,10 +25,12 @@ class MainBox(BoxLayout):
 
     self.previousList = []
     self.nextList = []
-    self.updateImageList()
+
 
     # References to main widgets
     displayLayout = self.ids.display
+    self.updateImageList()
+
     reloadButton = self.ids.reload
     nextButton = self.ids.next
     prevButton = self.ids.prev
@@ -81,13 +83,18 @@ class ToolbarContainer(BoxLayout):
   pass
 
 class DisplayLayout(FloatLayout):
+  def __init__(self, **kwargs):
+    super(DisplayLayout, self).__init__(**kwargs)
+
+    self.newImage=Image()
+    self.add_widget(self.newImage)
+
   # TODO: Implement changable size of landmarks
   # landmarkScale = NumericProperty(0.1)
 
   def changeImg(self, src):
     if src:
-      self.clear_widgets()
-      self.add_widget(Image(source=src))
+      self.newImage.source=src
 
 if __name__ == '__main__':
     AnotathorApp().run()
