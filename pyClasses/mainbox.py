@@ -5,9 +5,9 @@ import json
 from pyClasses.landmark import Landmark
 from pyClasses.displaylayout import DisplayLayout
 from pyClasses.toolbar import ToolbarContainer
+from pyClasses.buttons import ToggleButtonAlt
 
 from kivy.uix.boxlayout import BoxLayout
-
 
 class MainBox(BoxLayout):
   def __init__(self, **kwargs):
@@ -19,6 +19,7 @@ class MainBox(BoxLayout):
 
     # References to main widgets
     displayLayout = self.ids.display
+    landmarkParent = displayLayout.newImage
     self.updateImageList()
 
     reloadButton = self.ids.reload
@@ -27,27 +28,39 @@ class MainBox(BoxLayout):
     dragButton = self.ids.drag
     insertButton = self.ids.insert
     saveButton = self.ids.save
+    deleteButton = self.ids.deleteToggle
+    clearButton = self.ids.clearall
 
-    # Two functions of display
-    dragFunction = displayLayout.on_touch_down
-    insertFunction = self.addLandmark
+    # Functions of display
+    dragFunction = landmarkParent.on_touch_down
+    insertFunction = partial(self.addLandmark, landmarkParent)
 
     # Button operations
     reloadButton.on_press = self.updateImageList
     nextButton.on_press = self.nextImage
     prevButton.on_press = self.prevImage
-    dragButton.on_press = partial(self.changeMouseFunction, dragFunction)
-    insertButton.on_press = partial(self.changeMouseFunction, insertFunction)
-    saveButton.on_press = self.saveShape
+    dragButton.on_press = partial(self.changeMouseFunction, landmarkParent, dragFunction)
+    insertButton.on_press = partial(self.changeMouseFunction, landmarkParent, insertFunction)
+    deleteButton.on_press = partial(self.changeMouseFunction, landmarkParent, dragFunction)
+    saveButton.on_press = partial(self.saveShape, landmarkParent)
+    clearButton.on_press = partial(self.clearLandmarks, landmarkParent)
+
+    # ToggleButton toggler functions
+    deleteToggleFunction = partial(self.landmarkSuicideModeToggle, landmarkParent)
+    deleteButton.toggleFunction = deleteToggleFunction
 
     # Starting states
+    insertButton.on_press()
     insertButton.state = "down"
-    displayLayout.on_touch_down = insertFunction
 
-  def saveShape(self, *args, **kwargs):
-    display = self.ids.display
+  def clearLandmarks(self, landmarkParent, *args, **kwargs):
+    for child in list(landmarkParent.children):
+      if isinstance(child, Landmark):
+        landmarkParent.remove_widget(child)
+
+  def saveShape(self, landmarkParent, *args, **kwargs):
     coords = []
-    for child in display.children:
+    for child in landmarkParent.children:
       if isinstance(child, Landmark):
         coords.append(child.center)
 
@@ -58,16 +71,20 @@ class MainBox(BoxLayout):
       saveFile.write(jsonString)
       saveFile.write("\n")
 
-  def addLandmark(self, touch, *args, **kwargs):
-    displayLayout = self.ids.display
+  def addLandmark(self, landmarkParent, touch, *args, **kwargs):
     x, y = touch.pos
 
     newLandmark = Landmark()
-    displayLayout.add_widget(newLandmark)
+    landmarkParent.add_widget(newLandmark)
     newLandmark.center = (x,y)
 
-  def changeMouseFunction(self, function, *args, **kwargs):
-    self.ids.display.on_touch_down = function
+  def landmarkSuicideModeToggle(self, landmarkParent, *args, **kwargs):
+    for child in landmarkParent.children:
+      if isinstance(child, Landmark):
+        child.suicideModeToggle()
+
+  def changeMouseFunction(self, widget, function, *args, **kwargs):
+    widget.on_touch_down = function
 
   def updateImageList(self, *args, **kwargs):
     self.nextList = os.listdir('images/')
