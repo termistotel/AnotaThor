@@ -5,9 +5,9 @@ import json
 from pyClasses.landmark import Landmark
 from pyClasses.displaylayout import DisplayLayout
 from pyClasses.toolbar import ToolbarContainer
+from pyClasses.buttons import ToggleButtonAlt
 
 from kivy.uix.boxlayout import BoxLayout
-
 
 class MainBox(BoxLayout):
   def __init__(self, **kwargs):
@@ -28,6 +28,7 @@ class MainBox(BoxLayout):
     dragButton = self.ids.drag
     insertButton = self.ids.insert
     saveButton = self.ids.save
+    deleteButton = self.ids.deleteToggle
 
     # Functions of display
     dragFunction = landmarkParent.on_touch_down
@@ -39,11 +40,16 @@ class MainBox(BoxLayout):
     prevButton.on_press = self.prevImage
     dragButton.on_press = partial(self.changeMouseFunction, landmarkParent, dragFunction)
     insertButton.on_press = partial(self.changeMouseFunction, landmarkParent, insertFunction)
+    deleteButton.on_press = partial(self.changeMouseFunction, landmarkParent, dragFunction)
     saveButton.on_press = partial(self.saveShape, landmarkParent)
 
+    # ToggleButton toggler functions
+    deleteToggleFunction = partial(self.landmarkSuicideModeToggle, landmarkParent)
+    deleteButton.toggleFunction = deleteToggleFunction
+
     # Starting states
+    insertButton.on_press()
     insertButton.state = "down"
-    landmarkParent.on_touch_down = insertFunction
 
   def saveShape(self, landmarkParent, *args, **kwargs):
     coords = []
