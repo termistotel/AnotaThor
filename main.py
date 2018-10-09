@@ -3,6 +3,7 @@ kivy.require('1.10.0') # replace with your current kivy version !
 
 from functools import partial
 import os
+import json
 from kivy.app import App
 from pyClasses.landmark import Landmark
 
@@ -36,6 +37,7 @@ class MainBox(BoxLayout):
     prevButton = self.ids.prev
     dragButton = self.ids.drag
     insertButton = self.ids.insert
+    saveButton = self.ids.save
 
     # Two functions of display
     dragFunction = displayLayout.on_touch_down
@@ -47,10 +49,25 @@ class MainBox(BoxLayout):
     prevButton.on_press = self.prevImage
     dragButton.on_press = partial(self.changeMouseFunction, dragFunction)
     insertButton.on_press = partial(self.changeMouseFunction, insertFunction)
+    saveButton.on_press = self.saveShape
 
     # Starting states
     insertButton.state = "down"
     displayLayout.on_touch_down = insertFunction
+
+  def saveShape(self, *args, **kwargs):
+    display = self.ids.display
+    coords = []
+    for child in display.children:
+      if isinstance(child, Landmark):
+        coords.append(child.center)
+
+    dataPoint = {'imgName': self.nextList[len(self.nextList)-1], 'coords': coords}
+    jsonString = json.dumps(dataPoint)
+
+    with open('landmarks.json', 'a') as saveFile:
+      saveFile.write(jsonString)
+      saveFile.write("\n")
 
   def addLandmark(self, touch, *args, **kwargs):
     displayLayout = self.ids.display
