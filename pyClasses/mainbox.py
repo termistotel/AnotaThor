@@ -9,6 +9,13 @@ from pyClasses.buttons import ToggleButtonAlt
 
 from kivy.uix.boxlayout import BoxLayout
 
+def appendFuns(*funs):
+  def tmp(*args, **kwargs):
+    for fun in funs:
+      ret = fun(*args, **kwargs)
+    return ret
+  return tmp
+
 class MainBox(BoxLayout):
   def __init__(self, **kwargs):
     super(MainBox, self).__init__(**kwargs)
@@ -16,12 +23,9 @@ class MainBox(BoxLayout):
     self.previousList = []
     self.nextList = []
 
-
     # References to main widgets
     displayLayout = self.ids.display
     landmarkParent = displayLayout.newImage
-    self.updateImageList()
-
     reloadButton = self.ids.reload
     nextButton = self.ids.next
     prevButton = self.ids.prev
@@ -31,27 +35,27 @@ class MainBox(BoxLayout):
     deleteButton = self.ids.deleteToggle
     clearButton = self.ids.clearall
 
-    # Functions of display
+    # Landmark parent's on_touch_down modes
     dragFunction = landmarkParent.on_touch_down
-    insertFunction = partial(self.addLandmark, landmarkParent)
+    insertFunction =  appendFuns( partial(self.addLandmark, landmarkParent), landmarkParent.on_touch_down )
+    deleteFunction = landmarkParent.on_touch_down
+    defaultFunction = dragFunction
+
+    # ToggleButton toggler functions
+    dragButton.toggleFunction = partial(self.toggleMouseFunction, landmarkParent, dragFunction, defaultFunction)
+    insertButton.toggleFunction = partial(self.toggleMouseFunction, landmarkParent, insertFunction, defaultFunction)
+    deleteButton.toggleFunction = partial(self.landmarkSuicideModeToggle, landmarkParent)
 
     # Button operations
     reloadButton.on_press = self.updateImageList
     nextButton.on_press = self.nextImage
     prevButton.on_press = self.prevImage
-    dragButton.on_press = partial(self.changeMouseFunction, landmarkParent, dragFunction)
-    insertButton.on_press = partial(self.changeMouseFunction, landmarkParent, insertFunction)
-    deleteButton.on_press = partial(self.changeMouseFunction, landmarkParent, dragFunction)
     saveButton.on_press = partial(self.saveShape, landmarkParent)
     clearButton.on_press = partial(self.clearLandmarks, landmarkParent)
 
-    # ToggleButton toggler functions
-    deleteToggleFunction = partial(self.landmarkSuicideModeToggle, landmarkParent)
-    deleteButton.toggleFunction = deleteToggleFunction
-
     # Starting states
-    insertButton.on_press()
     insertButton.state = "down"
+    reloadButton.on_press()
 
   def clearLandmarks(self, landmarkParent, *args, **kwargs):
     for child in list(landmarkParent.children):
@@ -83,8 +87,11 @@ class MainBox(BoxLayout):
       if isinstance(child, Landmark):
         child.suicideModeToggle()
 
-  def changeMouseFunction(self, widget, function, *args, **kwargs):
-    widget.on_touch_down = function
+  def toggleMouseFunction(self, widget, function1, function2,  *args, **kwargs):
+    if widget.on_touch_down == function1:
+      widget.on_touch_down = function2
+    else:
+      widget.on_touch_down = function1
 
   def updateImageList(self, *args, **kwargs):
     self.nextList = os.listdir('images/')
