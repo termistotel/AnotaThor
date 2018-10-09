@@ -28,6 +28,19 @@
         text: "Insert"
         group: "modeSelect"
 
+    BoxLayout:
+      orientation: "horizontal"
+      size_hint: (None, None)
+      width: self.parent.width - 2*self.parent.spacing
+      height: self.width/2
+
+      StateOperationChangeToggleButton:
+        id: delete_toggle
+        text: "Delete"
+        group: "modeSelect"
+
+      ToggleButton:
+
     Button: 
       size_hint_y: 0.2
       text: "Save"

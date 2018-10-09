@@ -29,7 +29,7 @@ class MainBox(BoxLayout):
     insertButton = self.ids.insert
     saveButton = self.ids.save
 
-    # Two functions of display
+    # Functions of display
     dragFunction = landmarkParent.on_touch_down
     insertFunction = partial(self.addLandmark, landmarkParent)
 
@@ -47,7 +47,7 @@ class MainBox(BoxLayout):
 
   def saveShape(self, landmarkParent, *args, **kwargs):
     coords = []
-    for child in landmarkParent:
+    for child in landmarkParent.children:
       if isinstance(child, Landmark):
         coords.append(child.center)
 
@@ -64,6 +64,11 @@ class MainBox(BoxLayout):
     newLandmark = Landmark()
     landmarkParent.add_widget(newLandmark)
     newLandmark.center = (x,y)
+
+  def landmarkSuicideModeToggle(self, landmarkParent, *args, **kwargs):
+    for child in landmarkParent.children:
+      if isinstance(child, Landmark):
+        child.suicideModeToggle()
 
   def changeMouseFunction(self, widget, function, *args, **kwargs):
     widget.on_touch_down = function
