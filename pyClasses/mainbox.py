@@ -29,6 +29,7 @@ class MainBox(BoxLayout):
     insertButton = self.ids.insert
     saveButton = self.ids.save
     deleteButton = self.ids.deleteToggle
+    clearButton = self.ids.clearall
 
     # Functions of display
     dragFunction = landmarkParent.on_touch_down
@@ -42,6 +43,7 @@ class MainBox(BoxLayout):
     insertButton.on_press = partial(self.changeMouseFunction, landmarkParent, insertFunction)
     deleteButton.on_press = partial(self.changeMouseFunction, landmarkParent, dragFunction)
     saveButton.on_press = partial(self.saveShape, landmarkParent)
+    clearButton.on_press = partial(self.clearLandmarks, landmarkParent)
 
     # ToggleButton toggler functions
     deleteToggleFunction = partial(self.landmarkSuicideModeToggle, landmarkParent)
@@ -50,6 +52,11 @@ class MainBox(BoxLayout):
     # Starting states
     insertButton.on_press()
     insertButton.state = "down"
+
+  def clearLandmarks(self, landmarkParent, *args, **kwargs):
+    for child in list(landmarkParent.children):
+      if isinstance(child, Landmark):
+        landmarkParent.remove_widget(child)
 
   def saveShape(self, landmarkParent, *args, **kwargs):
     coords = []
