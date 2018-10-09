@@ -5,8 +5,10 @@ import json
 from pyClasses.landmark import Landmark
 from pyClasses.displaylayout import DisplayLayout
 from pyClasses.toolbar import ToolbarContainer
+from pyClasses.labelinput import LabelInput
 
 from kivy.uix.boxlayout import BoxLayout
+
 
 
 class MainBox(BoxLayout):
@@ -62,9 +64,15 @@ class MainBox(BoxLayout):
     displayLayout = self.ids.display
     x, y = touch.pos
 
+    label = LabelInput()
+
+
     newLandmark = Landmark()
     displayLayout.add_widget(newLandmark)
+    displayLayout.add_widget(label)
     newLandmark.center = (x,y)
+    label.center=(x,y)
+
 
   def changeMouseFunction(self, function, *args, **kwargs):
     self.ids.display.on_touch_down = function
