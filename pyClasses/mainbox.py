@@ -19,6 +19,7 @@ class MainBox(BoxLayout):
 
     # References to main widgets
     displayLayout = self.ids.display
+    landmarkParent = displayLayout.newImage
     self.updateImageList()
 
     reloadButton = self.ids.reload
@@ -29,25 +30,24 @@ class MainBox(BoxLayout):
     saveButton = self.ids.save
 
     # Two functions of display
-    dragFunction = displayLayout.on_touch_down
-    insertFunction = self.addLandmark
+    dragFunction = landmarkParent.on_touch_down
+    insertFunction = partial(self.addLandmark, landmarkParent)
 
     # Button operations
     reloadButton.on_press = self.updateImageList
     nextButton.on_press = self.nextImage
     prevButton.on_press = self.prevImage
-    dragButton.on_press = partial(self.changeMouseFunction, dragFunction)
-    insertButton.on_press = partial(self.changeMouseFunction, insertFunction)
-    saveButton.on_press = self.saveShape
+    dragButton.on_press = partial(self.changeMouseFunction, landmarkParent, dragFunction)
+    insertButton.on_press = partial(self.changeMouseFunction, landmarkParent, insertFunction)
+    saveButton.on_press = partial(self.saveShape, landmarkParent)
 
     # Starting states
     insertButton.state = "down"
-    displayLayout.on_touch_down = insertFunction
+    landmarkParent.on_touch_down = insertFunction
 
-  def saveShape(self, *args, **kwargs):
-    display = self.ids.display
+  def saveShape(self, landmarkParent, *args, **kwargs):
     coords = []
-    for child in display.children:
+    for child in landmarkParent:
       if isinstance(child, Landmark):
         coords.append(child.center)
 
@@ -58,16 +58,15 @@ class MainBox(BoxLayout):
       saveFile.write(jsonString)
       saveFile.write("\n")
 
-  def addLandmark(self, touch, *args, **kwargs):
-    displayLayout = self.ids.display
+  def addLandmark(self, landmarkParent, touch, *args, **kwargs):
     x, y = touch.pos
 
     newLandmark = Landmark()
-    displayLayout.add_widget(newLandmark)
+    landmarkParent.add_widget(newLandmark)
     newLandmark.center = (x,y)
 
-  def changeMouseFunction(self, function, *args, **kwargs):
-    self.ids.display.on_touch_down = function
+  def changeMouseFunction(self, widget, function, *args, **kwargs):
+    widget.on_touch_down = function
 
   def updateImageList(self, *args, **kwargs):
     self.nextList = os.listdir('images/')
