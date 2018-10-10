@@ -3,8 +3,9 @@ from kivy.uix.behaviors import DragBehavior
 from kivy.uix.behaviors import ButtonBehavior
 
 class Landmark(DragBehavior, ButtonBehavior, Widget):
-  def __init__(self, **kwargs):
-    super(Landmark, self).__init__(**kwargs)
+  def __init__(self, slider, *args, **kwargs):
+    self.scaler = slider
+    super(Landmark, self).__init__(*args, **kwargs)
     self.stagingMode = self.suicide
     self.currentMode = self.on_press
 

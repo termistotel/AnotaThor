@@ -74,7 +74,7 @@ class MainBox(BoxLayout):
   def addLandmark(self, landmarkParent, touch, *args, **kwargs):
     x, y = touch.pos
 
-    newLandmark = Landmark()
+    newLandmark = Landmark(self.ids.anotationsize)
     landmarkParent.add_widget(newLandmark)
     newLandmark.center = (x,y)
 

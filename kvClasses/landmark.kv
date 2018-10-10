@@ -7,7 +7,9 @@
       size: (self.width, self.height)
 
   size_hint: (None, None)
-  size: (10,10)
+  width: self.scaler.value*20
+  height: self.scaler.value*20
+
   drag_rectangle: self.x, self.y, self.width, self.height
   drag_timeout: 10000000
   drag_distance: 0
