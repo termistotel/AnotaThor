@@ -52,6 +52,7 @@ class MainBox(BoxLayout):
     # Starting states
     insertButton.on_press()
     insertButton.state = "down"
+    self.ids.anotationsize.landmarkParent = landmarkParent
 
   def clearLandmarks(self, landmarkParent, *args, **kwargs):
     for child in list(landmarkParent.children):
