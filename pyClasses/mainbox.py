@@ -56,6 +56,7 @@ class MainBox(BoxLayout):
     # Starting states
     insertButton.state = "down"
     reloadButton.on_press()
+    self.ids.anotationsize.landmarkParent = landmarkParent
 
   def clearLandmarks(self, landmarkParent, *args, **kwargs):
     for child in list(landmarkParent.children):
@@ -78,7 +79,7 @@ class MainBox(BoxLayout):
   def addLandmark(self, landmarkParent, touch, *args, **kwargs):
     x, y = touch.pos
 
-    newLandmark = Landmark()
+    newLandmark = Landmark(self.ids.anotationsize)
     landmarkParent.add_widget(newLandmark)
     newLandmark.center = (x,y)
 
