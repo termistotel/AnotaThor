@@ -58,6 +58,12 @@ class MainBox(BoxLayout):
     reloadButton.on_press()
     self.ids.anotationsize.landmarkParent = landmarkParent
 
+    # Property bindings
+    landmarkParent.bind(children=self.anotationNumberDisplay)
+
+  def anotationNumberDisplay(self, object, children):
+    self.ids.anotationnumber.text=str(len(children))
+
   def clearLandmarks(self, landmarkParent, *args, **kwargs):
     for child in list(landmarkParent.children):
       if isinstance(child, Landmark):

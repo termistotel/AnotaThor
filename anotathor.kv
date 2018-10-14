@@ -47,12 +47,28 @@
       id: save
 
     Scaler:
-      size_hint_y: 0.4
+      size_hint_y: 0.2
       orientation: "horizontal"
       id: anotationsize
       min: 0.0
       max: 1.0
       value: 0.5
+
+    BoxLayout:
+      canvas.before:
+        Color:
+          rgba: (0.1, 0.1, 0.1, 0.5)
+        Rectangle:
+          pos: self.pos
+          size: self.size
+      size_hint_y: 0.2
+      orientation: "vertical"
+      Label:
+        text: "Anotations:"
+      Label:
+        id: anotationnumber
+        # text: root.anotationNumber
+
 
     Button:
       size_hint_y: 0.2
