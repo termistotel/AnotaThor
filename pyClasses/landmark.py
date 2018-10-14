@@ -5,8 +5,8 @@ from kivy.uix.slider import Slider
 from kivy.properties import ObjectProperty
 
 class Landmark(DragBehavior, ButtonBehavior, Widget):
-  max_width = 20
-  max_height = 20
+  max_width = 80
+  max_height = 80
   def __init__(self, slider, *args, **kwargs):
     self.scaler = slider
     super(Landmark, self).__init__(*args, **kwargs)
