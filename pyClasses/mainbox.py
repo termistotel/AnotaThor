@@ -71,11 +71,19 @@ class MainBox(BoxLayout):
 
   def saveShape(self, landmarkParent, *args, **kwargs):
     coords = []
+    relative = []
+
+    imageSize = landmarkParent.norm_image_size
+    pic_zero = list(map( lambda x: x[0] - x[1]/2 , zip(landmarkParent.center, imageSize) ) )
+
     for child in landmarkParent.children:
       if isinstance(child, Landmark):
+        relative_x = (child.center[0] - pic_zero[0])/imageSize[0]
+        relative_y = (child.center[1] - pic_zero[1])/imageSize[1]
+        relative.append((relative_x, relative_y))
         coords.append(child.center)
 
-    dataPoint = {'imgName': self.nextList[len(self.nextList)-1], 'coords': coords}
+    dataPoint = {'imgName': self.nextList[len(self.nextList)-1], 'coords': coords, 'relative': relative}
     jsonString = json.dumps(dataPoint)
 
     with open('landmarks.json', 'a') as saveFile:
