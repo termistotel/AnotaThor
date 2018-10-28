@@ -42,37 +42,37 @@ class DisplayLayout(FloatLayout):
     for child in new_children:
       self.newImage.add_widget(child)
 
-  def addAnnotation(self, landmarkParent, *args, **kwargs):
-    self.current["addAnnotation"](landmarkParent, *args, **kwargs)
-    self.current["widgets"] = list(landmarkParent.children)
+  def addAnnotation(self, annotationParent, *args, **kwargs):
+    self.current["addAnnotation"](annotationParent, *args, **kwargs)
+    self.current["widgets"] = list(annotationParent.children)
 
   def saveAnnotations(self, imgName, annotationParent):
     return self.current["saveAnnotations"](imgName, annotationParent)
 
-  def annotationSuicideModeToggle(self, landmarkParent, *args, **kwargs):
+  def annotationSuicideModeToggle(self, annotationParent, *args, **kwargs):
     for anoType in self.anotations:
       for anotation in self.anotations[anoType]["widgets"]:
         anotation.suicideModeToggle()
 
-  def addLandmark(self, landmarkParent, touch, *args, **kwargs):
-    if landmarkParent.collide_point(*touch.pos):
+  def addLandmark(self, annotationParent, touch, *args, **kwargs):
+    if annotationParent.collide_point(*touch.pos):
       x, y = touch.pos
 
       # TODO: this line is bad
       scaler = self.parent.parent.ids.anotationsize
 
       newLandmark = Landmark(scaler)
-      landmarkParent.add_widget(newLandmark)
+      annotationParent.add_widget(newLandmark)
       newLandmark.center = (x,y)
 
-  def saveLandmarks(self, imgName, landmarkParent):
+  def saveLandmarks(self, imgName, annotationParent):
     coords = []
     relative = []
 
-    imageSize = landmarkParent.norm_image_size
-    pic_zero = list(map( lambda x: x[0] - x[1]/2 , zip(landmarkParent.center, imageSize) ) )
+    imageSize = annotationParent.norm_image_size
+    pic_zero = list(map( lambda x: x[0] - x[1]/2 , zip(annotationParent.center, imageSize) ) )
 
-    for child in landmarkParent.children:
+    for child in annotationParent.children:
       if isinstance(child, Landmark):
         relative_x = (child.center[0] - pic_zero[0])/imageSize[0]
         relative_y = (child.center[1] - pic_zero[1])/imageSize[1]

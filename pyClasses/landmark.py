@@ -21,13 +21,13 @@ class Landmark(DragBehavior, ButtonBehavior, Widget):
     self.parent.remove_widget(self)
 
 class Scaler(Slider):
-  landmarkParent = None
+  annotationParent = None
   def __init__(self, *args, **kwargs):
     super(Scaler, self).__init__(*args, **kwargs)
 
   def on_value(self, _, value):
-    if self.landmarkParent:
-      for landmark in self.landmarkParent.children:
+    if self.annotationParent:
+      for landmark in self.annotationParent.children:
         old_center = landmark.center.copy()
         landmark.size = landmark.max_width*value, landmark.max_height*value
         landmark.center = old_center
