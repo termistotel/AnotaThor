@@ -2,8 +2,22 @@
 
 <MainBox>:
   orientation: "horizontal"
-  DisplayLayout:
-    id: display
+  BoxLayout:
+    orientation: "vertical"
+    ToolbarContainer:
+      orientation: "horizontal"
+      size_hint_y: 0.05
+      padding: 5
+      spacing: 10
+
+      AnotationSelect:
+        id: anotationselect
+        size_hint_x: 0.1
+
+      Label:
+
+    DisplayLayout:
+      id: display
 
   
 
@@ -21,23 +35,57 @@
       width: self.parent.width - 2*self.parent.spacing
       height: self.width/2
 
-      ToggleButton:
+      ToggleButtonAlt:
         id: drag
         text: "Drag"
         group: "modeSelect"
 
-      ToggleButton:
+      ToggleButtonAlt:
         id: insert
         text: "Insert"
         group: "modeSelect"
+
+    BoxLayout:
+      orientation: "horizontal"
+      size_hint: (None, None)
+      width: self.parent.width - 2*self.parent.spacing
+      height: self.width/2
+
+      ToggleButtonAlt:
+        id: deleteToggle
+        text: "Delete"
+        group: "modeSelect"
+
+      ToggleButton:
 
     Button: 
       size_hint_y: 0.2
       text: "Save"
       id: save
 
-    Label:
-      size_hint_y: 0.4
+    Scaler:
+      size_hint_y: 0.2
+      orientation: "horizontal"
+      id: anotationsize
+      min: 0.0
+      max: 1.0
+      value: 0.5
+
+    BoxLayout:
+      canvas.before:
+        Color:
+          rgba: (0.1, 0.1, 0.1, 0.5)
+        Rectangle:
+          pos: self.pos
+          size: self.size
+      size_hint_y: 0.2
+      orientation: "vertical"
+      Label:
+        text: "Anotations:"
+      Label:
+        id: anotationnumber
+        # text: root.anotationNumber
+
 
     Button:
       size_hint_y: 0.2
@@ -49,6 +97,15 @@
       text: "Prev"
       id: prev
 
+    Label:
+      size_hint_y: 0.4
+
     Button:
+      size_hint_y: 0.2
       text: "Reload"
       id: reload
+
+    Button:
+      size_hint_y: 0.2
+      text: "Clear all"
+      id: clearall

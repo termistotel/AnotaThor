@@ -1,13 +1,21 @@
 <Landmark>:
   canvas.after:
     Color:
-      rgb: (0.1, 1, 0.1)
-    Rectangle:
-      pos: (self.x, self.y)
-      size: (self.width, self.height)
+      rgba: (1, 0, 0, 0.15)
+    Ellipse:
+      pos: self.pos
+      size: self.size
+
+    Color:
+      rgba: (0, 0, 0, 1)
+    Ellipse:
+      pos: (self.center_x - self.width/10, self.center_y - self.height/10)
+      size: (self.width/5, self.height/5)
 
   size_hint: (None, None)
-  size: (10,10)
+  width: self.scaler.value*self.max_width
+  height: self.scaler.value*self.max_height
+
   drag_rectangle: self.x, self.y, self.width, self.height
   drag_timeout: 10000000
   drag_distance: 0
