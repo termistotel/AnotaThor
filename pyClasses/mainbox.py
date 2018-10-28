@@ -1,10 +1,8 @@
 import os
 from functools import partial
 
-from pyClasses.landmark import Landmark
 from pyClasses.displaylayout import DisplayLayout
 from pyClasses.toolbar import ToolbarContainer
-from pyClasses.buttons import ToggleButtonAlt
 
 from kivy.uix.boxlayout import BoxLayout
 
