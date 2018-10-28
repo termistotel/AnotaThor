@@ -2,8 +2,21 @@
 
 <MainBox>:
   orientation: "horizontal"
-  DisplayLayout:
-    id: display
+  BoxLayout:
+    orientation: "vertical"
+    ToolbarContainer:
+      orientation: "horizontal"
+      size_hint_y: 0.05
+      padding: 10
+      spacing: 10
+
+      AnotationSelect:
+        size_hint_x: 0.1
+      Button:
+      Label:
+
+    DisplayLayout:
+      id: display
 
   ToolbarContainer:
     id: toolbar
