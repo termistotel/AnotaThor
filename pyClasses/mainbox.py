@@ -84,9 +84,10 @@ class MainBox(BoxLayout):
     displayLayout.addAnnotation(annotationParent, touch, *args, **kwargs)
 
     x,y = touch.pos
-    label = LabelInput()
-    displayLayout.add_widget(label)
-    label.center=(x,y)
+    if annotationParent.collide_point(x,y):
+      label = LabelInput()
+      displayLayout.add_widget(label)
+      label.center=(x,y)
 
   def annotationSuicideModeToggle(self, annotationParent, *args, **kwargs):
     self.ids.display.annotationSuicideModeToggle(annotationParent, *args, **kwargs)
