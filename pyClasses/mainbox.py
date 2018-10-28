@@ -37,7 +37,7 @@ class MainBox(BoxLayout):
 
     # Landmark parent's on_touch_down modes
     dragFunction = landmarkParent.on_touch_down
-    insertFunction =  appendFuns( partial(self.addLandmark, landmarkParent), landmarkParent.on_touch_down )
+    insertFunction =  appendFuns( landmarkParent.on_touch_down, partial(self.addLandmark, landmarkParent) )
     deleteFunction = landmarkParent.on_touch_down
     defaultFunction = dragFunction
 
@@ -91,11 +91,12 @@ class MainBox(BoxLayout):
       saveFile.write("\n")
 
   def addLandmark(self, landmarkParent, touch, *args, **kwargs):
-    x, y = touch.pos
+    if landmarkParent.collide_point(*touch.pos):
+      x, y = touch.pos
 
-    newLandmark = Landmark(self.ids.anotationsize)
-    landmarkParent.add_widget(newLandmark)
-    newLandmark.center = (x,y)
+      newLandmark = Landmark(self.ids.anotationsize)
+      landmarkParent.add_widget(newLandmark)
+      newLandmark.center = (x,y)
 
   def landmarkSuicideModeToggle(self, landmarkParent, *args, **kwargs):
     for child in landmarkParent.children:
