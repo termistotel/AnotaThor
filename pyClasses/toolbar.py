@@ -4,6 +4,8 @@ from kivy.uix.button import Button
 from kivy.uix.label import Label
 from kivy.uix.behaviors import ButtonBehavior
 
+from pyClasses.annotations.annotationRegister import annotationRegister
+
 from functools import partial
 
 class ToolbarContainer(BoxLayout):
@@ -21,14 +23,10 @@ class AnotationSelect(Button):
 
     dropdown = DropDown()
 
-    landmarkSelect = DropDownItem(text='Landmark', size_hint_y=None, height=44)
-    landmarkSelect.bind(on_release = partial(self.select, landmarkSelect.text))
-
-    lineSelect = DropDownItem(text='Line', size_hint_y=None, height=44)
-    lineSelect.bind(on_release = partial(self.select, lineSelect.text))
-
-    dropdown.add_widget(landmarkSelect)
-    dropdown.add_widget(lineSelect)
+    for name in annotationRegister:
+      annotationSelect = DropDownItem(text=name, size_hint_y=None, height=44)
+      annotationSelect.bind(on_release = partial(self.select, annotationSelect.text))
+      dropdown.add_widget(annotationSelect)
 
     dropdown.bind(on_select=lambda instance, x: setattr(self, 'text', x))
     self.dropdown = dropdown

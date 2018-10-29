@@ -2,7 +2,7 @@ from kivy.uix.widget import Widget
 from kivy.uix.behaviors import DragBehavior
 from kivy.uix.behaviors import ButtonBehavior
 
-from pyClasses.annotations.annotations import AnnotationHandler
+from pyClasses.annotations.annotationHandler import AnnotationHandler
 
 import json
 

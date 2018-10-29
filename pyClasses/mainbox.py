@@ -5,6 +5,7 @@ from pyClasses.displaylayout import DisplayLayout
 from pyClasses.toolbar import ToolbarContainer
 from pyClasses.buttons import ToggleButtonAlt
 from pyClasses.scaler import Scaler
+
 from kivy.uix.boxlayout import BoxLayout
 
 def appendFuns(*funs):
