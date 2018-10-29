@@ -4,7 +4,7 @@ from functools import partial
 from pyClasses.displaylayout import DisplayLayout
 from pyClasses.toolbar import ToolbarContainer
 from pyClasses.buttons import ToggleButtonAlt
-
+from pyClasses.scaler import Scaler
 from kivy.uix.boxlayout import BoxLayout
 
 def appendFuns(*funs):
@@ -59,7 +59,7 @@ class MainBox(BoxLayout):
     insertButton.state = "down"
     reloadButton.on_press()
     anotationSelect.select("Landmark")
-    self.ids.anotationsize.annotationParent = annotationParent
+    self.ids.annotationsize.annotationParent = annotationParent
 
     # Property bindings
     annotationParent.bind(children=self.anotationNumberDisplay)
@@ -78,7 +78,7 @@ class MainBox(BoxLayout):
       saveFile.write("\n")
 
   def addAnnotation(self, annotationParent, touch, *args, **kwargs):
-    self.ids.display.addAnnotation(annotationParent, touch, *args, **kwargs)
+    self.ids.display.addAnnotation(annotationParent, self.ids.annotationsize, touch, *args, **kwargs)
 
   def annotationSuicideModeToggle(self, annotationParent, *args, **kwargs):
     self.ids.display.annotationSuicideModeToggle(annotationParent, *args, **kwargs)
