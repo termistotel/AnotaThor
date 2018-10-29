@@ -1,11 +1,10 @@
 import os
 from functools import partial
-import json
 
-from pyClasses.landmark import Landmark
 from pyClasses.displaylayout import DisplayLayout
 from pyClasses.toolbar import ToolbarContainer
 from pyClasses.buttons import ToggleButtonAlt
+from pyClasses.scaler import Scaler
 
 from kivy.uix.boxlayout import BoxLayout
 
@@ -25,7 +24,7 @@ class MainBox(BoxLayout):
 
     # References to main widgets
     displayLayout = self.ids.display
-    landmarkParent = displayLayout.newImage
+    annotationParent = displayLayout.newImage
     reloadButton = self.ids.reload
     nextButton = self.ids.next
     prevButton = self.ids.prev
@@ -34,73 +33,56 @@ class MainBox(BoxLayout):
     saveButton = self.ids.save
     deleteButton = self.ids.deleteToggle
     clearButton = self.ids.clearall
+    anotationSelect = self.ids.anotationselect
 
-    # Landmark parent's on_touch_down modes
-    dragFunction = landmarkParent.on_touch_down
-    insertFunction =  appendFuns( partial(self.addLandmark, landmarkParent), landmarkParent.on_touch_down )
-    deleteFunction = landmarkParent.on_touch_down
+    # Annotation parent's on_touch_down modes
+    dragFunction = annotationParent.on_touch_down
+    insertFunction =  appendFuns( annotationParent.on_touch_down, partial(self.addAnnotation, annotationParent) )
+    deleteFunction = annotationParent.on_touch_down
     defaultFunction = dragFunction
 
     # ToggleButton toggler functions
-    dragButton.toggleFunction = partial(self.toggleMouseFunction, landmarkParent, dragFunction, defaultFunction)
-    insertButton.toggleFunction = partial(self.toggleMouseFunction, landmarkParent, insertFunction, defaultFunction)
-    deleteButton.toggleFunction = partial(self.landmarkSuicideModeToggle, landmarkParent)
+    dragButton.toggleFunction = partial(self.toggleMouseFunction, annotationParent, dragFunction, defaultFunction)
+    insertButton.toggleFunction = partial(self.toggleMouseFunction, annotationParent, insertFunction, defaultFunction)
+    deleteButton.toggleFunction = partial(self.annotationSuicideModeToggle, annotationParent)
 
     # Button operations
     reloadButton.on_press = self.updateImageList
     nextButton.on_press = self.nextImage
     prevButton.on_press = self.prevImage
-    saveButton.on_press = partial(self.saveShape, landmarkParent)
-    clearButton.on_press = partial(self.clearLandmarks, landmarkParent)
+    saveButton.on_press = partial(self.saveAnnotations, annotationParent)
+    clearButton.on_press = partial(self.clearAnnotations, annotationParent)
+
+    # Dropdown select operations
+    anotationSelect.pipeSelectedValue = displayLayout.changeAnnotationType
 
     # Starting states
     insertButton.state = "down"
     reloadButton.on_press()
-    self.ids.anotationsize.landmarkParent = landmarkParent
+    anotationSelect.select("Landmark")
+    self.ids.annotationsize.annotationParent = annotationParent
 
     # Property bindings
-    landmarkParent.bind(children=self.anotationNumberDisplay)
+    annotationParent.bind(children=self.anotationNumberDisplay)
 
   def anotationNumberDisplay(self, object, children):
     self.ids.anotationnumber.text=str(len(children))
 
-  def clearLandmarks(self, landmarkParent, *args, **kwargs):
-    for child in list(landmarkParent.children):
-      if isinstance(child, Landmark):
-        landmarkParent.remove_widget(child)
+  def clearAnnotations(self, annotationParent, *args, **kwargs):
+    for child in list(annotationParent.children):
+      annotationParent.remove_widget(child)
 
-  def saveShape(self, landmarkParent, *args, **kwargs):
-    coords = []
-    relative = []
-
-    imageSize = landmarkParent.norm_image_size
-    pic_zero = list(map( lambda x: x[0] - x[1]/2 , zip(landmarkParent.center, imageSize) ) )
-
-    for child in landmarkParent.children:
-      if isinstance(child, Landmark):
-        relative_x = (child.center[0] - pic_zero[0])/imageSize[0]
-        relative_y = (child.center[1] - pic_zero[1])/imageSize[1]
-        relative.append((relative_x, relative_y))
-        coords.append(child.center)
-
-    dataPoint = {'imgName': self.nextList[len(self.nextList)-1], 'coords': coords, 'relative': relative}
-    jsonString = json.dumps(dataPoint)
-
-    with open('landmarks.json', 'a') as saveFile:
+  def saveAnnotations(self, annotationParent, *args, **kwargs):
+    with open('annotations.json', 'a') as saveFile:
+      jsonString = self.ids.display.saveAnnotations(self.nextList[len(self.nextList)-1], annotationParent)
       saveFile.write(jsonString)
       saveFile.write("\n")
 
-  def addLandmark(self, landmarkParent, touch, *args, **kwargs):
-    x, y = touch.pos
+  def addAnnotation(self, annotationParent, touch, *args, **kwargs):
+    self.ids.display.addAnnotation(annotationParent, self.ids.annotationsize, touch, *args, **kwargs)
 
-    newLandmark = Landmark(self.ids.anotationsize)
-    landmarkParent.add_widget(newLandmark)
-    newLandmark.center = (x,y)
-
-  def landmarkSuicideModeToggle(self, landmarkParent, *args, **kwargs):
-    for child in landmarkParent.children:
-      if isinstance(child, Landmark):
-        child.suicideModeToggle()
+  def annotationSuicideModeToggle(self, annotationParent, *args, **kwargs):
+    self.ids.display.annotationSuicideModeToggle(annotationParent, *args, **kwargs)
 
   def toggleMouseFunction(self, widget, function1, function2,  *args, **kwargs):
     if widget.on_touch_down == function1:
