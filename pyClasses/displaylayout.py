@@ -1,6 +1,8 @@
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.image import Image
 
+import cv2
+
 from pyClasses.annotations.annotationRegister import annotationRegister
 
 class DisplayLayout(FloatLayout):
@@ -17,6 +19,7 @@ class DisplayLayout(FloatLayout):
   def changeImg(self, src):
     if src:
       self.newImage.source=src
+      self.newImage.arrayImg = cv2.cvtColor(cv2.imread(src), cv2.COLOR_BGR2RGB)
 
   def changeAnnotationType(self, anot):
     self.current.update_widgets(list(self.newImage.children))

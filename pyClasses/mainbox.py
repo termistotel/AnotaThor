@@ -9,6 +9,14 @@ from pyClasses.scaler import Scaler
 from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 
+def cleanTouchDown(fun, scroll):
+  def tmp(touch):
+    if touch.is_mouse_scrolling:
+      return scroll(touch)
+    else:
+      return fun(touch)
+  return tmp
+
 def appendFuns(*funs):
   def tmp(*args, **kwargs):
     for fun in funs:
@@ -60,9 +68,9 @@ class MainBox(BoxLayout):
     anotationSelect = self.ids.anotationselect
 
     # Annotation parent's on_touch_down modes
-    dragFunction = annotationParent.on_touch_down
-    insertFunction =  appendFuns( annotationParent.on_touch_down, partial(self.addAnnotation, annotationParent) )
-    deleteFunction = annotationParent.on_touch_down
+    dragFunction = cleanTouchDown(annotationParent.on_touch_down, self.on_mouse_scroll)
+    insertFunction =  cleanTouchDown(appendFuns( annotationParent.on_touch_down, partial(self.addAnnotation, annotationParent) ), self.on_mouse_scroll)
+    deleteFunction = cleanTouchDown(annotationParent.on_touch_down, self.on_mouse_scroll)
     defaultFunction = dragFunction
 
     # ToggleButton toggler functions
@@ -102,9 +110,21 @@ class MainBox(BoxLayout):
     self.kbh.addShortkey(['1'], partial(modeToggle, dragButton))
     self.kbh.addShortkey(['2'], partial(modeToggle, insertButton))
     self.kbh.addShortkey(['3'], partial(modeToggle, deleteButton))
-    self.kbh.addShortkey(['ctrl', 's'], saveButton.on_press)
-    self.kbh.addShortkey(['ctrl', 'left'], prevButton.on_press)
-    self.kbh.addShortkey(['ctrl', 'right'], nextButton.on_press)
+    self.kbh.addShortkey(['s'], saveButton.on_press)
+    self.kbh.addShortkey(['a'], prevButton.on_press)
+    self.kbh.addShortkey(['d'], nextButton.on_press)
+
+  def on_mouse_scroll(self, touch):
+    part = 0.01
+    scaler = self.ids.annotationsize
+    if touch.button == 'scrolldown':
+      scaler.value += part
+      if scaler.value < 0:
+        scaler.value = 0
+    if touch.button == 'scrollup':
+      scaler.value -= part
+      if scaler.value > 1:
+        scaler.value = 1
 
   def anotationNumberDisplay(self, object, children):
     self.ids.anotationnumber.text=str(len(children))
