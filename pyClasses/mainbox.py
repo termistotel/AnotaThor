@@ -6,6 +6,7 @@ from pyClasses.toolbar import ToolbarContainer
 from pyClasses.buttons import ToggleButtonAlt
 from pyClasses.scaler import Scaler
 
+from kivy.core.window import Window
 from kivy.uix.boxlayout import BoxLayout
 
 def appendFuns(*funs):
@@ -14,6 +15,29 @@ def appendFuns(*funs):
       ret = fun(*args, **kwargs)
     return ret
   return tmp
+
+class KeyBoardHandler():
+  def __init__(self, widget, mode):
+    self.keyboard = Window.request_keyboard(self.closeKeyboard, widget, mode)
+    self.keyboard.bind(on_key_down=self.on_key_down)
+    self.keyboard.bind(on_key_up=self.on_key_up)
+    self.downActions = []
+
+  def closeKeyboard(self):
+    self.keyboard.unbind(on_key_down=self.on_key_down)
+    self.keyboard.unbind(on_key_up=self.on_key_up)
+    self.keyboard = None
+
+  def addShortkey(self, keys, function):
+    self.downActions.append((keys, function))
+
+  def on_key_down(self, keyboard, keycode, text, modifiers):
+    for keys, fun in self.downActions:
+      if set(keys) == set([keycode[1]]+modifiers):
+        fun()
+
+  def on_key_up(self, *args):
+    pass
 
 class MainBox(BoxLayout):
   def __init__(self, **kwargs):
@@ -64,6 +88,23 @@ class MainBox(BoxLayout):
 
     # Property bindings
     annotationParent.bind(children=self.anotationNumberDisplay)
+
+    # Keyboard request and hotkey bindings
+    def modeToggle(button):
+      # First deactivate all other modes
+      for but in ToggleButtonAlt.get_widgets("modeSelect"):
+        if but != button:
+          but.state="normal"
+      # Activate target mode
+      button.state="down"
+
+    self.kbh = KeyBoardHandler(self, 'text')
+    self.kbh.addShortkey(['1'], partial(modeToggle, dragButton))
+    self.kbh.addShortkey(['2'], partial(modeToggle, insertButton))
+    self.kbh.addShortkey(['3'], partial(modeToggle, deleteButton))
+    self.kbh.addShortkey(['ctrl', 's'], saveButton.on_press)
+    self.kbh.addShortkey(['ctrl', 'left'], prevButton.on_press)
+    self.kbh.addShortkey(['ctrl', 'right'], nextButton.on_press)
 
   def anotationNumberDisplay(self, object, children):
     self.ids.anotationnumber.text=str(len(children))
