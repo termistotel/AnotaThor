@@ -6,7 +6,9 @@ from pyClasses.annotations.annotationHandler import AnnotationHandler
 
 import json
 
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+import os
+import cv2
 
 class BoundingBoxHandler(AnnotationHandler):
   def __init__(self, *args, **kwargs):
@@ -39,8 +41,11 @@ class BoundingBoxHandler(AnnotationHandler):
         x,y = int(relative_x*shp[1]), int((relative_y)*shp[0])
         w,h = int(child.width*shp[1]/imageSize[0]), int(child.height*shp[0]/imageSize[1])
 
-        plt.imshow(parent.arrayImg[ y-h:y, x:x+w, :]/255)
-        plt.show()
+        N = len(list(os.listdir("savedImages")))
+        cv2.imwrite('savedImages/'+'img'+str(N)+'.jpg', parent.arrayImg[ y-h:y, x:x+w, :])
+
+        # plt.imshow(parent.arrayImg[ y-h:y, x:x+w, :]/255)
+        # plt.show()
 
     return "To be implemented"
 

@@ -19,7 +19,8 @@ class DisplayLayout(FloatLayout):
   def changeImg(self, src):
     if src:
       self.newImage.source=src
-      self.newImage.arrayImg = cv2.cvtColor(cv2.imread(src), cv2.COLOR_BGR2RGB)
+      # self.newImage.arrayImg = cv2.cvtColor(cv2.imread(src), cv2.COLOR_BGR2RGB)
+      self.newImage.arrayImg = cv2.imread(src)
 
   def changeAnnotationType(self, anot):
     self.current.update_widgets(list(self.newImage.children))
