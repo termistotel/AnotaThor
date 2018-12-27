@@ -32,7 +32,7 @@ class LandmarkHandler(AnnotationHandler):
         relative.append((relative_x, relative_y))
         coords.append(child.center)
 
-    dataPoint = {'imgName': imgName, 'coords': coords, 'relative': relative}
+    dataPoint = {'imgName': imgName, 'type': 'Landmark','coords': coords, 'relative': relative}
     jsonString = json.dumps(dataPoint)
 
     return jsonString

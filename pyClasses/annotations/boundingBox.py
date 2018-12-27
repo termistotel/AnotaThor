@@ -32,6 +32,7 @@ class BoundingBoxHandler(AnnotationHandler):
     pic_zero = list(map( lambda x: x[0] - x[1]/2 , zip(parent.center, imageSize) ) )
     shp = parent.arrayImg.shape
 
+    boxs=[]
     for child in parent.children:
       if isinstance(child, BoundingBox):
         relative_x = (child.x - pic_zero[0])/imageSize[0]
@@ -44,10 +45,16 @@ class BoundingBoxHandler(AnnotationHandler):
         N = len(list(os.listdir("savedImages")))
         cv2.imwrite('savedImages/'+'img'+str(N)+'.jpg', parent.arrayImg[ y-h:y, x:x+w, :])
 
+        boxs.append((x, y-h, x+w, y))
+
         # plt.imshow(parent.arrayImg[ y-h:y, x:x+w, :]/255)
         # plt.show()
 
-    return "To be implemented"
+    dataPoint = {'imgName': imgName, 'type': 'Landmark', 'box_relative': boxs}
+    jsonString = json.dumps(dataPoint)
+
+    return jsonString
+
 
 class BoundingBox(DragBehavior, ButtonBehavior, Widget):
   max_width = 80
