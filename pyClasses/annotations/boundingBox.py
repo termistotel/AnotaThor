@@ -33,6 +33,7 @@ class BoundingBoxHandler(AnnotationHandler):
     shp = parent.arrayImg.shape
 
     boxs=[]
+    names=[]
     for child in parent.children:
       if isinstance(child, BoundingBox):
         relative_x = (child.x - pic_zero[0])/imageSize[0]
@@ -43,14 +44,16 @@ class BoundingBoxHandler(AnnotationHandler):
         w,h = int(child.width*shp[1]/imageSize[0]), int(child.height*shp[0]/imageSize[1])
 
         N = len(list(os.listdir("savedImages")))
-        cv2.imwrite('savedImages/'+'img'+str(N)+'.jpg', parent.arrayImg[ y-h:y, x:x+w, :])
+        outImgName = 'img'+"{:06d}".format(N)+'.jpg'
+        cv2.imwrite('savedImages/' + outImgName, parent.arrayImg[ y-h:y, x:x+w, :])
 
         boxs.append((x, y-h, x+w, y))
+        names.append(outImgName)
 
         # plt.imshow(parent.arrayImg[ y-h:y, x:x+w, :]/255)
         # plt.show()
 
-    dataPoint = {'imgName': imgName, 'type': 'Landmark', 'box_relative': boxs}
+    dataPoint = {'type': 'BoundingBox', 'orgImgName': imgName,'segImgNames': names, 'box_relative': boxs}
     jsonString = json.dumps(dataPoint)
 
     return jsonString

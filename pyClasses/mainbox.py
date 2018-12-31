@@ -115,7 +115,7 @@ class MainBox(BoxLayout):
     self.kbh.addShortkey(['d'], nextButton.on_press)
 
   def on_mouse_scroll(self, touch):
-    part = 0.01
+    part = 0.005
     scaler = self.ids.annotationsize
     if touch.button == 'scrolldown':
       scaler.value += part
