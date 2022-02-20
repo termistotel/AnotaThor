@@ -44,8 +44,10 @@ class KeyBoardHandler():
       if set(keys) == set([keycode[1]]+modifiers):
         fun()
 
-  def on_key_up(self, *args):
-    pass
+  def on_key_up(self, keyboard, keycode):
+    for keys, fun in self.downActions:
+      if set(keys) == set([keycode[1]]):
+        fun()
 
 class MainBox(BoxLayout):
   def __init__(self, **kwargs):
