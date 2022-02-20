@@ -1,12 +1,13 @@
 from kivy.uix.widget import Widget
 from kivy.uix.behaviors import DragBehavior
 from kivy.uix.behaviors import ButtonBehavior
+from kivy.properties import NumericProperty
 
 from pyClasses.annotations.annotationHandler import AnnotationHandler
 
 import json
 
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 import os
 import cv2
 
@@ -26,6 +27,7 @@ class BoundingBoxHandler(AnnotationHandler):
       bb.width = scaler.value*bb.max_width
       bb.height = scaler.value*bb.max_height
       bb.center = (x,y)
+      bb.scale_to(scaler.value)
 
   def saveAnnotations(self, imgName, parent):
     imageSize = parent.norm_image_size
@@ -45,13 +47,18 @@ class BoundingBoxHandler(AnnotationHandler):
 
         N = len(list(os.listdir("savedImages")))
         outImgName = 'img'+"{:06d}".format(N)+'.jpg'
-        cv2.imwrite('savedImages/' + outImgName, parent.arrayImg[ y-h:y, x:x+w, :])
+
+        starty, startx = max(0, y-h), max(0, x)
+        stopy, stopx = max(1, y), max(1, x+w)
+        print(starty, stopy, y, h)
+        print(startx, stopx, x, w)
+        patch = parent.arrayImg[ starty:stopy, startx:stopx, :]
+        # plt.imshow(patch)
+        # plt.show()
+        cv2.imwrite('savedImages/' + outImgName, patch)
 
         boxs.append((x, y-h, x+w, y))
         names.append(outImgName)
-
-        # plt.imshow(parent.arrayImg[ y-h:y, x:x+w, :]/255)
-        # plt.show()
 
     dataPoint = {'type': 'BoundingBox', 'orgImgName': imgName,'segImgNames': names, 'box_relative': boxs}
     jsonString = json.dumps(dataPoint)
@@ -62,9 +69,12 @@ class BoundingBoxHandler(AnnotationHandler):
 class BoundingBox(DragBehavior, ButtonBehavior, Widget):
   max_width = 80
   max_height = 80
+  max_line_width = 6
+  line_width = NumericProperty(2)
 
   def __init__(self, scaler, *args, **kwargs):
     self.scaler = scaler
+    self.current_scale = 0.5
     super(BoundingBox, self).__init__(*args, **kwargs)
     self.stagingMode = self.suicide
     self.currentMode = self.on_press
@@ -75,3 +85,12 @@ class BoundingBox(DragBehavior, ButtonBehavior, Widget):
 
   def suicide(self, *args, **kwargs):
     self.parent.remove_widget(self)
+
+  def scale_to(self, value):
+    self.line_width = max(1, self.max_line_width*value)
+
+  def scroll_to(self, value):
+    old_center = self.center.copy()
+    self.current_scale = min(max(0.01, self.current_scale + value), 1)
+    self.size = self.max_width*self.current_scale, self.max_height*self.current_scale
+    self.center = old_center

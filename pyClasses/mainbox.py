@@ -117,16 +117,19 @@ class MainBox(BoxLayout):
     self.kbh.addShortkey(['d'], nextButton.on_press)
 
   def on_mouse_scroll(self, touch):
-    part = 0.005
-    scaler = self.ids.annotationsize
     if touch.button == 'scrolldown':
-      scaler.value += part
-      if scaler.value < 0:
-        scaler.value = 0
-    if touch.button == 'scrollup':
-      scaler.value -= part
-      if scaler.value > 1:
-        scaler.value = 1
+      value = -0.01
+    elif touch.button == "scrollup":
+      value = 0.01
+    else:
+      return
+
+    annotationParent = self.ids.display.newImage
+    for child in annotationParent.children:
+      if child.collide_point(*touch.pos):
+        child.scroll_to(value)
+        return
+
 
   def anotationNumberDisplay(self, object, children):
     self.ids.anotationnumber.text=str(len(children))

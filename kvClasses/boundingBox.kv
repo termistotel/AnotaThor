@@ -4,15 +4,15 @@
       rgba: (1, 0, 0, 1)
     Line:
       points: [self.x, self.y, self.x + self.width, self.y, self.x + self.width, self.y + self.height, self.x, self.y + self.height, self.x, self.y]
-      width: 2
+      width: self.line_width*max(self.width, self.height)/250
     Ellipse:
-      pos: (self.center_x - min(self.width,self.height)/50, self.center_y - min(self.width,self.height)/50)
-      size: (min(self.width,self.height)/25, min(self.width, self.height)/25)
+      pos: (self.center_x - self.line_width*max(self.width, self.height)/250, self.center_y - self.line_width*max(self.width, self.height)/250)
+      size: (2*self.line_width*max(self.width, self.height)/250, 2*self.line_width*max(self.width, self.height)/250)
 
 
   size_hint: (None, None)
-  width: self.scaler.value*self.max_width
-  height: self.scaler.value*self.max_height
+  width: 0.5*self.max_width
+  height: 0.5*self.max_height
 
   drag_rectangle: self.x, self.y, self.width, self.height
   drag_timeout: 10000000

@@ -8,6 +8,4 @@ class Scaler(Slider):
   def on_value(self, _, value):
     if self.annotationParent:
       for annotation in self.annotationParent.children:
-        old_center = annotation.center.copy()
-        annotation.size = annotation.max_width*value, annotation.max_height*value
-        annotation.center = old_center
+        annotation.scale_to(value)

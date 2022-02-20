@@ -53,3 +53,11 @@ class Landmark(DragBehavior, ButtonBehavior, Widget):
 
   def suicide(self, *args, **kwargs):
     self.parent.remove_widget(self)
+
+  def scale_to(self, value):
+    old_center = self.center.copy()
+    self.size = self.max_width*value, self.max_height*value
+    self.center = old_center
+
+  def scroll_to(self, value):
+    pass
