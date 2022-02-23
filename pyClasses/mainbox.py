@@ -138,6 +138,7 @@ class MainBox(BoxLayout):
   def clearAnnotations(self, annotationParent, *args, **kwargs):
     for child in list(annotationParent.children):
       annotationParent.remove_widget(child)
+      del child
 
   def saveAnnotations(self, annotationParent, *args, **kwargs):
     with open('annotations.json', 'a') as saveFile:
