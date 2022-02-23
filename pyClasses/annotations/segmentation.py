@@ -3,6 +3,7 @@ from kivy.uix.behaviors import DragBehavior
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.properties import NumericProperty
 from kivy.uix.image import Image
+from kivy.graphics.texture import Texture
 
 from pyClasses.annotations.annotationHandler import AnnotationHandler
 
@@ -11,6 +12,7 @@ import json
 import matplotlib.pyplot as plt
 import os
 import cv2
+import numpy as np
 
 class SegmentationHandler(AnnotationHandler):
   def __init__(self, *args, **kwargs):
@@ -20,55 +22,24 @@ class SegmentationHandler(AnnotationHandler):
     self.image_widget = self.anoClass()
 
   def addAnnotation(self, parent, scaler, touch, *args, **kwargs):
-    print(self.image_widget.parent)
-    print(parent, scaler, touch)
-    # if parent.collide_point(*touch.pos):
-    #   x, y = touch.pos
+    if self.image_widget.parent:
+      pass
+    else:
+      # Create Overlay image for label, bind position and size to the main image ones
+      parent.add_widget(self.image_widget)
+      self.image_widget.pos = parent.pos
+      self.image_widget.size = parent.size
+      parent.bind(pos=self.image_widget.setter('pos'), size=self.image_widget.setter('size'))
+      self.image_widget.label = np.zeros(parent.arrayImg.shape[:2] + (1,), dtype = bool)
 
-    #   bb = BoundingBox(scaler)
-    #   parent.add_widget(bb)
-    #   bb.max_width = parent.norm_image_size[0]
-    #   bb.max_height = parent.norm_image_size[1]
-    #   bb.width = scaler.value*bb.max_width
-    #   bb.height = scaler.value*bb.max_height
-    #   bb.center = (x,y)
-    #   bb.scale_to(scaler.value)
+      self.image_widget.label_image = (np.random.uniform(size=self.image_widget.label.shape[:2] + (4,))*255).astype(np.uint8)
+      shp = self.image_widget.label_image.shape
+      texture = Texture.create(size=(shp[1], shp[0]))
+      texture.blit_buffer(self.image_widget.label_image.reshape(-1), colorfmt='rgba', bufferfmt='ubyte')
+      self.image_widget.texture = texture
 
   def saveAnnotations(self, imgName, parent):
-    imageSize = parent.norm_image_size
-    pic_zero = list(map( lambda x: x[0] - x[1]/2 , zip(parent.center, imageSize) ) )
-    shp = parent.arrayImg.shape
-
-    boxs=[]
-    names=[]
-    for child in parent.children:
-      if isinstance(child, BoundingBox):
-        relative_x = (child.x - pic_zero[0])/imageSize[0]
-        relative_y = 1-(child.y - pic_zero[1])/imageSize[1]
-        # relative.append((relative_x, relative_y))
-
-        x,y = int(relative_x*shp[1]), int((relative_y)*shp[0])
-        w,h = int(child.width*shp[1]/imageSize[0]), int(child.height*shp[0]/imageSize[1])
-
-        N = len(list(os.listdir("savedImages")))
-        outImgName = 'img'+"{:06d}".format(N)+'.jpg'
-
-        starty, startx = max(0, y-h), max(0, x)
-        stopy, stopx = max(1, y), max(1, x+w)
-        print(starty, stopy, y, h)
-        print(startx, stopx, x, w)
-        patch = parent.arrayImg[ starty:stopy, startx:stopx, :]
-        # plt.imshow(patch)
-        # plt.show()
-        cv2.imwrite('savedImages/' + outImgName, patch)
-
-        boxs.append((x, y-h, x+w, y))
-        names.append(outImgName)
-
-    dataPoint = {'type': 'BoundingBox', 'orgImgName': imgName,'segImgNames': names, 'box_relative': boxs}
-    jsonString = json.dumps(dataPoint)
-
-    return jsonString
+    return None
 
 
 class SegmentationImg(Image, ButtonBehavior):
